@@ -3,11 +3,11 @@ import praw
 
 # Configure this section yourself
 USERAGENT = "XXXXX:vX.X (by /u/XXXXX)"
-USERNAME = "XXXXX"
-PASSWORD = "XXXXX"
+BOT_USERNAME = "XXXXX"
+BOT_PASSWORD = "XXXXX"
+RECEIVING_USERNAME = "XXXXX"
 SUBREDDIT = "XXXXX"
-KEYWORD = "XX".lower()
-
+KEYWORD = "XXXXX".lower()
 
 def main():
     r = praw.Reddit(user_agent = USERAGENT)
@@ -26,6 +26,9 @@ def main():
         i) if it does, relate the permalink to the keyword in the user's database
            !) add the permalink to haveChecked specific to the user's keyword
         ii) if not, continue to the next submission
+
+* implement XML file usage to store users, their keywords, and the found submissions
+
 """
 
 def hasKeyword(content, keyword):
@@ -40,12 +43,12 @@ def checkSubmissions(reddit, checked):
         text_ = submission.selftext.encode("utf8")
         if submission.id not in haveChecked and \
            (hasKeyword(title_.lower, KEYWORD) or hasKeyword(text_.lower(), KEYWORD)):
-            haveChecked.append(submission.id)
-            sendPM(reddit, submission)
+            haveChecked.append(submission.id) # append the submission to the list
+            sendPM(reddit, submission) # notify the user that a thread was made
 
 def sendPM(reddit, submission):
-    message_ = "Thread containing %s found! %s" % (KEYWORD, submission.permalink)
-    # still build on this
+    message_ = "Thread containing {0} found! {1}".format(KEYWORD, submission.permalink)
+    reddit.send_message(RECEIVING_USERNAME, "Keyword \"{0}\" Found!", message_);
 
 if __name__ == "__main__":
     main()
